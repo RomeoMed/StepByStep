@@ -1,3 +1,4 @@
 secret.json
 db_configs.json
-user_files/
+user_files/*
+.idea/*
