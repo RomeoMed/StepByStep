@@ -1,0 +1,11 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <div class="main_content">
+        <form method="post" class="form" action="/upload_image" name="content_setup" enctype="multipart/form-data">
+            <center><h3>Book Editor</h3></center>
+
+            <input id="submit" type="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
+        </form>
+    </div>
+{% endblock %}

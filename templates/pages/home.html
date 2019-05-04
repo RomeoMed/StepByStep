@@ -1,0 +1,50 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="row main-no-login">
+    <div class="col-lg-3">
+        <div class="tile link_tile">
+            <a href="{{ url_for('login') }}">
+                <h4>Login</h4>
+                <div class="tile_icon">
+                    <img src="{{ url_for('static', filename='images/login.png') }}"/>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="tile link_tile">
+            <a href="{{ url_for('register') }}">
+                <h4>Register</h4>
+                <div class="tile_icon">
+                    <img src="{{ url_for('static', filename='images/register.png') }}"/>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="tile link_tile">
+            <a href="https://bochpub.com">
+                <h4>Boch Publishing</h4>
+                <div class="tile_icon">
+                    <img src="{{ url_for('static', filename='images/boch_pub.png') }}"/>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="tile link_tile">
+            <a href="https://bochpub.com">
+                <h4>Contact Us</h4>
+                <div class="tile_icon">
+                    <img src="{{ url_for('static', filename='images/contact_us.png') }}"/>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="image_box">
+        <img src="{{ url_for('static', filename='img/mychild.jpg') }}"/>
+    </div>
+</div>
+{% endblock %}

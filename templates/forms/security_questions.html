@@ -1,0 +1,18 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Security Questions{% endblock %}
+{% block content %}
+    <form method="post" class="form" action='/security' id="security_form">
+        <h3 class="form-heading">Security Questions: </h3>
+        <div class="err hidden"><span style="color:red">Duplicate question selected!</span></div>
+        {{ form.question1.label }}
+        {{ form.question1(class_ = 'form-control first-input', autofocus = true) }}
+        {{ form.answer1(class_='form-control', required = true) }}
+        {{ form.question2.label }}
+        {{ form.question2(class_ = 'form-control') }}
+        {{ form.answer2(class_='form-control', required = true) }}
+        {{ form.question3.label }}
+        {{ form.question3(class_ = 'form-control') }}
+        {{ form.answer3(class_='form-control last-input', required = true) }}
+        <input id="security_btn" type="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
+    <form>
+{% endblock %}

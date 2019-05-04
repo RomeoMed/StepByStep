@@ -1,0 +1,14 @@
+{% extends 'layouts/book_editor.html' %}
+{% block title %}Book Editor{% endblock %}
+{% block content %}
+    <div class="main_content">
+        <form method="post" class="form" action="/book-editor/setup" name="setup">
+            <center><h3>Tile & Acknowledgement</h3></center>
+            <h4>{{ form.title.description }}</h4>
+            {{ form.title(class_ = 'form-control first-input', id="bk_title", placeholder= "title....", required=true, autofocus=true) }}
+            <h4>{{ form.acknowledgement.description }}</h4>
+            {{ form.acknowledgement(class_ = 'form-control', id="acknowledgement", placeholder="Book Acknowledgement...", cols="35", rows="10") }}
+            <input id="submit" type="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
+        </form>
+    </div>
+{% endblock %}

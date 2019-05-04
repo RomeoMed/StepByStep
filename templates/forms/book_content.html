@@ -1,0 +1,17 @@
+{% extends 'layouts/book_editor.html' %}
+{% block title %}Book Editor{% endblock %}
+{% block content %}
+    <div class="main_content">
+        <form method="post" class="form" action="" name="content_setup" id="content-post" enctype="multipart/form-data">
+            <center><h3>Book Editor</h3></center>
+            <h4>Writing Page {{ form.content.description }} of 12</h4>
+            {{ form.content(class_ = 'form-control', id="content", placeholder="Your story...", cols="35", rows="10") }}
+            <h4>Upload a drawing for your story!</h4>
+            {{ form.upload(class_ = 'form-control', id="uploader") }}
+            <div class="form_row">
+                <a id='previous'><i class="fa fa-arrow-left" style="font-size:48px;color:green"></i></a>
+                <a id='next'><i class="fa fa-arrow-right" style="font-size:48px;color:green"></i></a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

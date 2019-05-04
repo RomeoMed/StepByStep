@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Step-by-Step My Child and I</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}"/>
+        <script type= 'text/javascript' src="{{ url_for('static', filename='js/libs/jquery-3.3.1.js') }}"></script>
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>-->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/progress-steps.js') }}"></script>
+    </head>
+    <body>
+        <header>
+            {% block header %}
+		    <nav>
+			    <ul class="nav justify-content-end">
+                    {% if session.logged_id %}
+                    <li class="nav-item">
+					    <a class="nav-link active" href="{{ url_for('logout') }}">Logout</a>
+				    </li>
+				    <li class="nav-item">
+					    <a class="nav-link" href="#">About US</a>
+				    </li>
+				    <li class="nav-item">
+					    <a class="nav-link" href="#">Boch Publishing</a>
+				    </li>
+				    <li class="nav-item">
+					    <a class="nav-link" href="#">Home</a>
+				    </li>
+			        {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                {% endif %}
+                </ul>
+		    </nav>
+            {% endblock %}
+        </header>
+        <main id="content" role="main" >
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-block alert-error fade in">
+                    <a class="close" data-dismiss="alert">&times;</a>
+                        {{ message }}
+                </div>
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+        </main>
+        <div id="footer">
+            <div class="container">
+                <p>Your Company &copy; All Rights Reserved.</p>
+                {% block footer %}{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

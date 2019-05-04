@@ -1,0 +1,20 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+    <form method="post" class="form" action="/register" id="reg_form">
+        <h3 class="form-heading">Register <a href="{{ url_for('home') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
+        <div class="exists hidden"><span style="color:red">User already exists!</span></div>
+        <div class="err hidden"><span style="color:red">Passwords must match!</span></div>
+        {{ form.name(class_ = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
+        {{ form.lname(class_ = 'form-control', placeholder = form.lname.label.text, required = true) }}
+        {{ form.address1(class_ = 'form-control', placeholder = form.address1.label.text, required = true) }}
+        {{ form.address2(class_ = 'form-control', placeholder = form.address2.label.text) }}
+        {{ form.city(class_ = 'form-control', placeholder = form.city.label.text, required = true) }}
+        {{ form.state(class_ = 'form-control', placeholder = form.state.label.text, required = true) }}
+        {{ form.zip(class_ = 'form-control', placeholder = form.zip.label.text, required = true) }}
+        {{ form.email(class_='form-control', placeholder= form.email.label.txt, required=true, id='user_email') }}
+        {{ form.password(class_ = 'form-control', placeholder = form.password.label.text, required = true) }}
+        {{ form.confirm(class_ = 'form-control', placeholder = form.confirm.label.text, required = true) }}
+        <input id="register" type="submit" value="Register" class="btn btn-primary btn-lg btn-block"/>
+    <form>
+{% endblock %}

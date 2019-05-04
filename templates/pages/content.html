@@ -1,0 +1,73 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="content" id= "app">
+    <div class="row header-row">
+        <h1><b class="title">{{ result['title'] }}</b></h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="input_box">
+                    <h5><b class="subtitle">{{ result['subtitle'] }}</b></h5>
+                    <textarea rows="4" cols="50" id="txt_setting">This is where you enter your text...</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input_box">
+                    <h5><b class="second_box">{{ result['subtitle'] }} additional description</b></h5>
+                    <textarea rows="4" cols="50" id="txt_char_intro">This is where you enter your text...</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input_box">
+                    <h5><b>PAGE IMAGE</b></h5>
+                    <div class="image_upload">
+                        <form action="" method="post" enctype="multipart/form-data">
+                            Select image to upload:
+                            <input type="file" name="fileToUpload" id="fileToUpload">
+                            <input type="submit" value="Upload Image" name="submit">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="instructions" id="info">
+                <center><h3><b class="subtitle">{{ result['subtitle'] }}</b></h3></center>
+                <center><h4><b class="section_title">{{ result['section_name'] }}</b></h4></center>
+                <div class="main_content">{{ result['body'] }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row page_nav">
+        <div class="navigation">
+            <a href="#" class="previous round">&#8249;</a>
+            <a href="#" class="preview">Preview Book</a>
+            <a href="#" id="next" class="next round" onclick=test();>&#8250;</a>
+            <script type="text/javascript">
+                var test = function() {
+                    var section = "{{result['section_name']}}";
+                    advance(section);
+                }
+            </script>
+        </div>
+    </div>
+    <div class="row">
+        <div class="step-container">
+            <ul class="progressbar">
+                <li id="step_1" class="active">Characters</li>
+                <li id="step_2">Setting</li>
+                <li id="step_3">Plot</li>
+                <li id="step_4">Beginning</li>
+                <li id="step_5">Middle</li>
+                <li id="step_6">end</li>
+            </ul>
+        </div>
+        <script type="text/javascript">
+            setStep({{ result['step'] }})
+        </script>
+    </div>
+</div>
+{% endblock %}

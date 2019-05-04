@@ -1,0 +1,15 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Step-by-Step{% endblock %}
+{% block content %}
+    <div class="row login-landing">
+        <div class="filter">
+            <div class="form-content">
+                <form method="post" class="form" action="/landing" name="login" id="landing_form">
+                    <input type="submit" value="Start a New Story" name="start" class="landing-btn btn btn-primary btn-lg btn-block"/>
+                    <input type="submit" value="Continue a Story" name="continue" class="landing-btn btn btn-primary btn-lg btn-block"/>
+                    <input id='landing-input' name='event' type="text" class="hidden">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

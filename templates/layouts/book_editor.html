@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}"/>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <script type= 'text/javascript' src="{{ url_for('static', filename='js/libs/jquery-3.3.1.js') }}"></script>
+    </head>
+    <body class="form-only-page">
+        <header>
+            {% block header %}
+            <div><center><b>Step-by-Step My Child and Me</b></center></div>
+		    <nav>
+			    <ul class="nav justify-content-end">
+                    <li class="nav-item">
+					    <a class="nav-link active" href="{{ url_for('logout') }}">Logout</a>
+				    </li>
+				    <li class="nav-item">
+					    <a class="nav-link" href="#">Something</a>
+				    </li>
+				    <li class="nav-item">
+					    <a class="nav-link" href="#">Something2</a>
+				    </li>
+				    <li class="nav-item">
+					    <a class="nav-link" href="#">About Us</a>
+				    </li>
+			    </ul>
+		    </nav>
+            {% endblock %}
+        </header>
+        <div class="container-fluid">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-warning fade in">
+                <a class="close" data-dismiss="alert">&times;</a>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+        </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    </body>
+</html>
