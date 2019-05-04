@@ -11,16 +11,18 @@ class PdfHandler:
     def __init__(self, page_name: str, user_id: str):
         self._directory = 'user_files/user_id_{}'.format(user_id)
         self._create_directory()
-        name = os.path.join(self._directory, page_name + '.pdf')
-        #self._canvas = canvas.Canvas(name, pagesize=A5)
-        #self._canvas.setLineWidth(.3)
-        #self._canvas.setFont('Helvetica', 12)
-        self.doc = SimpleDocTemplate(name, pagesize=A5,
+        self._file_path = os.path.join(self._directory, page_name + '.pdf')
+        self.validate_path()
+        self.doc = SimpleDocTemplate(self._file_path, pagesize=A5,
                                      rightMargin=65, leftMargin=65,
                                      topMargin=50, bottomMargin=18)
         self.story = []
         self.styles = getSampleStyleSheet()
         self.styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+
+    def validate_path(self) -> None:
+        if os.path.exists(self._file_path):
+            os.remove(self._file_path)
 
     def _create_directory(self) -> None:
         try:
@@ -33,7 +35,7 @@ class PdfHandler:
         title = '<font size=14>{}</font>'.format(title)
         self.story.append(Paragraph(title, self.styles['Title']))
 
-    def write_document(self, text: str) -> bool:
+    def write_document(self, text: str) -> any:
         text = '<font size=12>{}</font>'.format(text)
         self.story.append(Paragraph(text, self.styles["Justify"]))
         self.story.append(Spacer(1, 12))
@@ -42,9 +44,9 @@ class PdfHandler:
     def save(self) -> bool:
         try:
             self.doc.build(self.story)
-            return True
+            return self._file_path
         except Exception as e:
-            return False
+            return None
 
 
 if __name__ == '__main__':

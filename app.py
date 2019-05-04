@@ -71,6 +71,7 @@ def login():
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
+    _sh.logout(session['user_email'])
     session.clear()
     return redirect(url_for('home'))
 
@@ -119,14 +120,14 @@ def security():
 
         return render_template('forms/security_questions.html', form=form)
     else:
-        user_id = session.get('user_id')
+        user_email = session.get('user_email')
         question_obj = [
             [request.form.get('question1'), request.form.get('answer1')],
             [request.form.get('question2'), request.form.get('answer2')],
             [request.form.get('question3'), request.form.get('answer3')]
         ]
 
-        _sh.store_security_questions(user_id, question_obj)
+        _sh.store_security_questions(user_email, question_obj)
 
         return redirect(url_for('book_setup'))
 
@@ -164,6 +165,13 @@ def book_setup():
 def book_writer():
     if request.method == 'GET':
         form = BookWriter()
+        if 'last_page' in session:
+            form.content.description = str(session['last_page'])
+            form.content.data = session['content'] if session['content'] else ''
+            session['page_num'] = session.pop('last_page')
+            del session['content']
+            session['update_existing'] = True
+
         form.content.description = str(session['page_num'])
         return render_template('/forms/book_content.html', form=form)
 
@@ -202,8 +210,13 @@ def landing():
             result = _sh.get_saved_progress(str(user_id))
 
             if result:
+                session['content'] = result['content']
+                session['story_id'] = result['story_id']
+                session['last_page'] = result['last_page']
+
                 return redirect(url_for('book_writer'))
             else:
+                flash('no saved story found')
                 return redirect(url_for('book_setup'))
         else:
             return redirect(url_for('book_setup'))
@@ -223,12 +236,24 @@ def advance():
     story_text = request.form.get('content')
     fileName = secure_filename(file.filename)
     fileName = 'page_{}.image_{}'.format(str(session['page_num']), fileName)
+    full_filepath = os.path.join(file_path, fileName)
+    if os.path.exists(full_filepath):
+        os.remove(full_filepath)
     file.save(os.path.join(file_path, fileName))
+    _sh.save_image_path(full_filepath, str(session['user_id']), page)
+
     flash('file saved')
 
     success = _sh.write_page(story_text, page, str(session['user_id']))
     if success:
         session['page_num'] = session['page_num'] + 1
+        if 'update_existing' in session:
+            result = _sh.get_saved_progress(str(session['user_id']))
+
+            if result:
+                session['content'] = result['content']
+            else:
+                del session['update_existing']
         return redirect(url_for('book_writer'))
     else:
         flash('Error submitting request')
