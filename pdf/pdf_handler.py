@@ -9,10 +9,11 @@ import os
 
 class PdfHandler:
     def __init__(self, page_name: str, user_id: str):
-        self._directory = 'user_files/user_id_{}'.format(user_id)
+        self._directory = 'static/user_files/user_id_{}'.format(user_id)
         self._create_directory()
         self._file_path = os.path.join(self._directory, page_name + '.pdf')
         self.validate_path()
+        self.full_path = '/user_files/user_id_{}/{}.pdf'.format(user_id, page_name)
         self.doc = SimpleDocTemplate(self._file_path, pagesize=A5,
                                      rightMargin=65, leftMargin=65,
                                      topMargin=50, bottomMargin=18)
@@ -41,10 +42,10 @@ class PdfHandler:
         self.story.append(Spacer(1, 12))
         return self.save()
 
-    def save(self) -> bool:
+    def save(self) -> any:
         try:
             self.doc.build(self.story)
-            return self._file_path
+            return self.full_path
         except Exception as e:
             return None
 

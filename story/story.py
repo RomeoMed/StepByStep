@@ -51,9 +51,9 @@ class Story:
         try:
             with self._db as _db:
                 _db.insert(sql, [story_id, page_num, page_type, file_path, ])
-            return True
+            return story_id
         except Exception as e:
-            return False
+            return None
 
     def get_story_progress(self) -> any:
         sql = """SELECT
@@ -80,6 +80,11 @@ class Story:
         else:
             return None
 
+    def get_section_by_page(self, story_id: str, page: str) -> any:
+        content = self.get_page_content(story_id, page)
+
+        return content
+
     def get_page_content(self, story_id: str, page_num: str) -> any:
         sql = """SELECT content FROM page_content
                 WHERE story_id = %s 
@@ -104,3 +109,32 @@ class Story:
             return result[0][0]
         else:
             return None
+
+    def save_content(self, story_id: str, page_num: str, text: str) -> None:
+        sql = """INSERT INTO page_content 
+                 (story_id, page_number, content)
+                 VALUES(%s, %s, %s)
+                 """
+        with self._db as _db:
+            _db.insert(sql, [story_id, page_num, text])
+
+    def preview_book(self, story_id: str) -> any:
+        sql = """SELECT page_number,
+                        page_type,
+                        page_path
+                 FROM pages 
+                 WHERE story_id = %s"""
+        with self._db as _db:
+            result = _db.select_with_params(sql, [story_id, ])
+        if result:
+            return_obj = {}
+            for res in result:
+                page_number = res[0]
+                page_type = res[1]
+                page_path = res[2] or '-'
+                obj_key = 'page_{}'.format(str(page_number))
+                tmp_obj = {
+                    page_type: page_path
+                }
+                return_obj[obj_key] = tmp_obj
+        return return_obj

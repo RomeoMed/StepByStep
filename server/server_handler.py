@@ -66,6 +66,7 @@ class ServerHandler:
         filepath = pdf_writer.write_document(text)
         story.save_progress(story_id, page, 'body')
         story.save_document_path(story_id, filepath, page, 'text')
+        story.save_content(story_id, page, text)
 
         return True
 
@@ -74,11 +75,21 @@ class ServerHandler:
 
         return story.get_story_progress()
 
+    def get_section(self, user_id: str, story_id: str, page: str) -> any:
+        story = Story(user_id)
+
+        return story.get_section_by_page(story_id, page)
+
     def save_image_path(self, fullpath: str, user_id: str, page_num: str) -> None:
         story = Story(user_id)
         story_id = story.get_story_id_for_user()
 
         story.save_document_path(story_id, fullpath, page_num, 'image')
+
+    def get_book_preview(self, story_id: str, user_id: str) -> any:
+        story = Story(user_id)
+        return story.preview_book(story_id)
+
 
 if __name__ == '__main__':
     test = ServerHandler()

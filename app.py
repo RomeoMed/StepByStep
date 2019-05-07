@@ -2,15 +2,13 @@ import os
 import logging
 import json
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request, jsonify, session, abort, url_for, redirect, flash
+from flask import Flask, render_template, request, \
+    jsonify, session, abort, url_for, redirect, flash, send_from_directory
 from flask_cors import CORS
-from session import UserSession
-from user import User
 from server import ServerHandler
 from forms import *
 from functools import wraps
 from werkzeug.utils import secure_filename
-import requests
 
 #logPath = r'log\log.log'
 # Set the name of the object we are logging for
@@ -149,12 +147,13 @@ def book_setup():
         return render_template('forms/book_setup.html', form=form)
     else:
         title = request.form.get('title')
-        acknowledgement = request.form.get('acknowledgement')
+        acknowledgement = request.form.get('acknowledgement') or ''
         page = 'acknowledgement'
         user_id = session['user_id']
-        page_directory = _sh.write_acknowledgement_page(title, acknowledgement, page, user_id)
+        story_id = _sh.write_acknowledgement_page(title, acknowledgement, page, user_id)
 
-        if page_directory:
+        if story_id:
+            session['story_id'] = story_id
             session['page_num'] = 1
             session['page_type'] = 'content'
             return redirect(url_for('book_writer'))
@@ -165,10 +164,11 @@ def book_setup():
 def book_writer():
     if request.method == 'GET':
         form = BookWriter()
-        if 'last_page' in session:
+        if 'last_page' in session and 'content' in session:
             form.content.description = str(session['last_page'])
-            form.content.data = session['content'] if session['content'] else ''
-            session['page_num'] = session.pop('last_page')
+            form.content.data = session['content']
+            session['page_num'] = session['last_page']
+            del session['last_page']
             del session['content']
             session['update_existing'] = True
 
@@ -181,21 +181,6 @@ def book_writer():
 # def intro():
 
 #    return render_template('book_content.html')
-
-
-# TODO: deprecate?
-@app.route("/get_content", methods=['POST'])
-@login_required
-def get_content():
-    user = session.get('username')
-    content = UserSession(user).get_content()
-    if content:
-        session['story_id'] = content.get('story_id')
-        session['section'] = content.get('section')
-        session['step'] = content.get('step')
-        session['user'] = user
-
-    return jsonify(content)
 
 
 @app.route('/landing', methods=['POST', 'GET'])
@@ -222,31 +207,40 @@ def landing():
             return redirect(url_for('book_setup'))
 
 
-@app.route('/go_back')
+@app.route('/go_back', methods=['GET', 'POST'])
 def go_back():
-    return 'test'
+    session['last_page'] = str(session['page_num'] - 1)
+    user_id = session['user_id']
+    story_id = session['story_id']
+    content = _sh.get_section(str(user_id), str(story_id), session['last_page'])
+
+    if content:
+        session['content'] = content
+
+    return redirect(url_for('book_writer'))
 
 
 @app.route('/advance', methods=['POST', 'GET'])
 @login_required
 def advance():
-    file = request.files['upload']
     page = str(session['page_num'])
-    file_path = 'user_files/user_id_{}'.format(str(session['user_id']))
+    if 'upload' in request.files:
+        file = request.files['upload']
+        file_path = 'static/user_files/user_id_{}'.format(str(session['user_id']))
+        fileName = secure_filename(file.filename)
+        fileName = 'page_{}.image_{}'.format(str(session['page_num']), fileName)
+        full_filepath = os.path.join(file_path, fileName)
+        return_path = '/user_files/user_id_{}/{}'.format(str(session['user_id']), fileName)
+        if os.path.exists(full_filepath):
+            os.remove(full_filepath)
+        file.save(os.path.join(file_path, fileName))
+        _sh.save_image_path(return_path, str(session['user_id']), page)
+
+        flash('file saved')
     story_text = request.form.get('content')
-    fileName = secure_filename(file.filename)
-    fileName = 'page_{}.image_{}'.format(str(session['page_num']), fileName)
-    full_filepath = os.path.join(file_path, fileName)
-    if os.path.exists(full_filepath):
-        os.remove(full_filepath)
-    file.save(os.path.join(file_path, fileName))
-    _sh.save_image_path(full_filepath, str(session['user_id']), page)
-
-    flash('file saved')
-
     success = _sh.write_page(story_text, page, str(session['user_id']))
     if success:
-        session['page_num'] = session['page_num'] + 1
+        session['page_num'] = int(session['page_num']) + 1
         if 'update_existing' in session:
             result = _sh.get_saved_progress(str(session['user_id']))
 
@@ -259,9 +253,23 @@ def advance():
         flash('Error submitting request')
 
 
+@app.route('/preview-book', methods=['GET'])
+@login_required
+def preview():
+    preview_obj = _sh.get_book_preview(str(session['story_id']), str(session['story_id']))
+    return render_template('forms/book_preview.html', result=preview_obj)
+
+
 @app.route('/forgot')
 def forgot():
     return render_template('/forms/forgot.html')
+
+
+@app.route('/uploads/<path:filename>')
+def stored_file(filename):
+    media_folder = 'user_files'
+    filename = filename[filename.index('/'):]
+    return send_from_directory(media_folder, filename, as_attachment=True)
 
 
 if __name__ == '__main__':

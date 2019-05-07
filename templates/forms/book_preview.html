@@ -1,0 +1,43 @@
+{% extends 'layouts/book_editor.html' %}
+{% block title %}Book Editor{% endblock %}
+{% block content %}
+    <div class="main_content">
+        <div class="scene">
+            <article class="book">
+                {% set count = 0 %}
+                {% for k,v in result.items() %}
+                    {% set item = result['page_' + count|string] %}
+                    {% if count == 0 %}
+                        <section class="page active">
+                            <div class="front">
+                                <p><img src="{{ url_for('static', filename= item['acknowledgement']) }}"></p>
+                            </div>
+                            <div class="back">
+                                <p><img src=""></p>
+                            </div>
+                        </section>
+                    {% else %}
+                        <section class="page">
+                            <div class="front">
+                                <p><embed src="{{ url_for('static', filename= item['text']) }}" width="800px" height="800px" /></p>
+                            </div>
+                            <div class="back">
+                                <p><img src=""></p>
+                            </div>
+                        </section>
+                        <section class="page">
+                            <div class="front">
+                                <p><embed src="{{ url_for('static', filename= item['image']) }}" width="800px" height="800px" /></p>
+                            </div>
+                            <div class="back">
+                                <p><img src=""></p>
+                            </div>
+                        </section>
+                    {% endif %}
+                    {% set count = count + 1 %}
+                {% endfor %}
+            </article>
+        </div>
+    </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/book.js') }}"></script>
+{% endblock %}
